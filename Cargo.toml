@@ -1,0 +1,15 @@
+[package]
+name = "packer_plugin_updater"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+full_moon = "0.16.2"
+git2 = "0.15"
+console = "0.15.2"
+dialoguer = "0.10.2"
+home = "0.5.4"
+regex = "1"
+clap = { version = "4.0.29", features = ["derive"] }
