@@ -1,9 +1,9 @@
 use clap::Parser;
 use std::{fs, path};
-mod result;
 mod git;
 mod lua;
 mod prompt;
+mod result;
 use full_moon::{ast, visitors::*};
 use result::Result;
 
@@ -20,11 +20,11 @@ fn get_default_repo_base_path() -> path::PathBuf {
 #[command(author, version, about, long_about = None)]
 struct UpdaterOptions {
     #[arg(short, long)]
-    plugin_lua_file: String,
+    pub plugin_lua_file: String,
     #[arg(short, long, default_value_t = get_default_repo_base_path().display().to_string())]
-    repo_base_path: String,
+    pub repo_base_path: String,
     #[arg(short, long)]
-    output_file: String,
+    pub output_file: String,
 }
 fn get_repo_name(plugin_name: &str) -> String {
     if let Some(found) = plugin_name.find('/') {
@@ -43,7 +43,10 @@ fn identify_target_branch_name(default_branch: &str, locked_branch: Option<&str>
 
 fn main() -> Result<()> {
     let updater_opts = UpdaterOptions::parse();
-    println!("{:?}", updater_opts);
+    interactively_update_plugins(updater_opts)
+}
+
+fn interactively_update_plugins(updater_opts: UpdaterOptions) -> Result<()> {
     let tree = lua::parse_lua(&updater_opts.plugin_lua_file)?;
     let stmts: Vec<&ast::Stmt> = tree.nodes().stmts().collect();
     let define_plugins_func = lua::find_define_plugins_function(&stmts);
@@ -72,6 +75,7 @@ fn main() -> Result<()> {
                         .join("opt")
                         .join(repo_name);
                 }
+                // lua::replace_table_constructor(&node, "AAAAAA");
                 let repo = git::get_repo(&repo_path).unwrap();
                 let default_branch = git::get_remote_branch_name(&repo_path).unwrap();
                 let locked_to_branch =
@@ -115,4 +119,18 @@ fn main() -> Result<()> {
     .visit_ast(tree.clone());
     fs::write(updater_opts.output_file, full_moon::print(&new_ast)).expect("Unable to write file");
     Ok(())
+
 }
+// #[cfg(test)]
+// mod tests {
+//     use crate::{UpdaterOptions, interactively_update_plugins};
+//     #[test]
+//     fn it_works() {
+//         let opts = UpdaterOptions{
+//             plugin_lua_file: "/Users/nick/.config/nvim/lua/user/plugins.lua".to_owned(),
+//             output_file: "/tmp/f.lua".to_owned(),
+//             repo_base_path: "/Users/nick/.local/share/nvim/site/pack/packer/".to_owned()
+//         };
+//         interactively_update_plugins(opts);
+//     }
+// }

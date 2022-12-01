@@ -223,7 +223,8 @@ pub fn replace_table_constructor(
                 value: new_sha,
             };
             punc.push(ast::punctuated::Pair::End(new_field));
-            let table_ctor = ast::TableConstructor::new().with_fields(punc);
+            let table_ctor = ast::TableConstructor::new().with_fields(punc)
+                .with_braces(table_ctor.braces().clone());
             return Some(table_ctor);
         }
     }
