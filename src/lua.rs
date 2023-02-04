@@ -1,6 +1,6 @@
+use crate::result::Result;
 use full_moon::{ast, tokenizer};
 use std::fs;
-use crate::result::Result;
 pub fn parse_lua(filename: &str) -> Result<ast::Ast> {
     let code = fs::read_to_string(filename)?;
     Ok(full_moon::parse(&code)?)
@@ -92,11 +92,13 @@ pub fn get_table_ctor_for_use_call(use_call: &ast::FunctionCall) -> Option<&ast:
             ast::Suffix::Call(anonymous_call) => Some(anonymous_call),
             _ => None,
         })
-        .filter_map(|anonymous_call| match anonymous_call {
-            ast::Call::AnonymousCall(ast::FunctionArgs::TableConstructor(table_ctor)) => {
-                Some(table_ctor)
+        .filter_map(|anonymous_call| {
+            match anonymous_call {
+                ast::Call::AnonymousCall(ast::FunctionArgs::TableConstructor(table_ctor)) => {
+                    Some(table_ctor)
+                },
+                _ => None,
             }
-            _ => None,
         })
         .next()
 }
@@ -223,7 +225,8 @@ pub fn replace_table_constructor(
                 value: new_sha,
             };
             punc.push(ast::punctuated::Pair::End(new_field));
-            let table_ctor = ast::TableConstructor::new().with_fields(punc)
+            let table_ctor = ast::TableConstructor::new()
+                .with_fields(punc)
                 .with_braces(table_ctor.braces().clone());
             return Some(table_ctor);
         }

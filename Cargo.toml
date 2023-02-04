@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-full_moon = "0.16.2"
+full_moon = "0.17.0"
 git2 = "0.15"
 console = "0.15.2"
 dialoguer = "0.10.2"
