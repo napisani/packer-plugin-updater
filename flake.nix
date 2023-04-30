@@ -58,7 +58,14 @@
             };
 
           # Configuration for the non-Rust dependencies
-          buildInputs = with pkgs; [ openssl.dev ];
+          buildInputs = with pkgs; [ 
+            openssl.dev 
+            /* darwin.apple_sdk.frameworks.Security */
+            pkg-config
+            libiconv
+          ] ++ (if pkgs.system == "x86_64-darwin" || pkgs.system == "aarch64-darwin" then [
+            darwin.apple_sdk.frameworks.Security
+          ] else [ ]);
           nativeBuildInputs = with pkgs; [ rustc cargo pkgconfig nixpkgs-fmt ];
           buildEnvVars = {
             PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
