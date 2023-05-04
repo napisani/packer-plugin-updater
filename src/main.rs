@@ -25,6 +25,8 @@ struct UpdaterOptions {
     pub repo_base_path: String,
     #[arg(short, long)]
     pub output_file: String,
+    #[arg(short, long)]
+    pub update_all: bool,
 }
 fn get_repo_name(plugin_name: &str) -> String {
     if let Some(found) = plugin_name.find('/') {
@@ -96,7 +98,12 @@ fn interactively_update_plugins(updater_opts: UpdaterOptions) -> Result<()> {
                     println!("already up to date - skipping");
                     return node;
                 }
-                let idx = prompt::prompt_for_commit_selection(&head_commits_prompt).unwrap();
+                let idx = if !self.updater_opts.update_all {
+                    1usize
+                } else {
+                    let answer = prompt::prompt_for_commit_selection(&head_commits_prompt).unwrap();
+                    answer
+                };
                 if idx == 1 {
                     println!(
                         "updating plugin {} from {} -> {}",
@@ -119,7 +126,6 @@ fn interactively_update_plugins(updater_opts: UpdaterOptions) -> Result<()> {
     .visit_ast(tree.clone());
     fs::write(updater_opts.output_file, full_moon::print(&new_ast)).expect("Unable to write file");
     Ok(())
-
 }
 // #[cfg(test)]
 // mod tests {
