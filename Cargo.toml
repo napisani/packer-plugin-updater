@@ -3,7 +3,7 @@ name = "packer_plugin_updater"
 description = "A tool to update packer plugins"
 license = "MIT"
 readme = "README.md"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 repository = "https://github.com/napisani/packer-plugin-updater"
 
@@ -17,6 +17,7 @@ dialoguer = "0.10.2"
 home = "0.5.4"
 regex = "1"
 clap = { version = "4.0.29", features = ["derive"] }
+openssl = { version = "0.10.35", features = ["vendored"] }
 
 # The profile that 'cargo dist' will build with
 [profile.dist]
