@@ -3,7 +3,7 @@ name = "packer_plugin_updater"
 description = "A tool to update packer plugins"
 license = "MIT"
 readme = "README.md"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 repository = "https://github.com/napisani/packer-plugin-updater"
 
